@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { BatchItem, GridConfig } from '../types';
 import { isAndroidDevice, isDirectoryPickerSupported } from '../services/fileStorage';
+import { hapticSave, hapticTap } from '../services/haptics';
 
 interface BatchQueueProps {
   items: BatchItem[];
@@ -264,7 +265,10 @@ export const BatchQueue: React.FC<BatchQueueProps> = ({
               {pendingCount > 0 && (
                 <button
                   type="button"
-                  onClick={onProcessAll}
+                  onClick={() => {
+                    hapticTap();
+                    onProcessAll();
+                  }}
                   disabled={isProcessingBatch}
                   className="flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-3 py-1.5 text-xs font-semibold text-white shadow-md shadow-indigo-600/30 transition hover:from-indigo-500 hover:to-indigo-400 active:scale-95 disabled:opacity-50"
                 >
@@ -286,7 +290,10 @@ export const BatchQueue: React.FC<BatchQueueProps> = ({
               {completedCount > 0 && (
                 <button
                   type="button"
-                  onClick={onReprocessAll}
+                  onClick={() => {
+                    hapticTap();
+                    onReprocessAll();
+                  }}
                   disabled={isProcessingBatch}
                   className="flex items-center gap-1.5 rounded-lg border border-indigo-500/40 bg-indigo-950/60 px-2.5 py-1.5 text-xs font-semibold text-indigo-200 transition hover:bg-indigo-900/80 hover:text-white active:scale-95 disabled:opacity-50"
                   title="Reprocess all documents with updated margin and layout settings"
@@ -301,7 +308,10 @@ export const BatchQueue: React.FC<BatchQueueProps> = ({
                 <div className="flex items-center gap-1.5">
                   <button
                     type="button"
-                    onClick={() => onSaveAll(false)}
+                    onClick={() => {
+                      hapticSave();
+                      onSaveAll(false);
+                    }}
                     className="flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm shadow-emerald-600/30 transition hover:bg-emerald-500 active:scale-95"
                     title={`Save all ${completedCount} PDFs into Downloads/${config.appName}/`}
                   >
@@ -311,7 +321,10 @@ export const BatchQueue: React.FC<BatchQueueProps> = ({
 
                   <button
                     type="button"
-                    onClick={() => onSaveAll(true)}
+                    onClick={() => {
+                      hapticSave();
+                      onSaveAll(true);
+                    }}
                     className="flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800 px-2.5 py-1.5 text-xs font-medium text-slate-300 transition hover:bg-slate-700 hover:text-white"
                     title={`Bundle all into Downloads/${config.appName}_Batch.zip`}
                   >
@@ -401,7 +414,10 @@ export const BatchQueue: React.FC<BatchQueueProps> = ({
                           {/* Reprocess individual */}
                           <button
                             type="button"
-                            onClick={() => onReprocessItem(item.id)}
+                            onClick={() => {
+                              hapticTap();
+                              onReprocessItem(item.id);
+                            }}
                             disabled={isProcessingBatch}
                             className="flex items-center gap-1 rounded-lg border border-indigo-500/30 bg-indigo-950/50 px-2 py-1 text-[11px] font-medium text-indigo-300 transition hover:bg-indigo-900/80 hover:text-white disabled:opacity-40"
                             title="Reprocess with current margins & print options"
@@ -422,7 +438,10 @@ export const BatchQueue: React.FC<BatchQueueProps> = ({
 
                           <button
                             type="button"
-                            onClick={() => onSaveItem(item)}
+                            onClick={() => {
+                              hapticSave();
+                              onSaveItem(item);
+                            }}
                             className="flex items-center gap-1 rounded-lg bg-emerald-600 px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm transition hover:bg-emerald-500 active:scale-95"
                             title={`Save to Downloads/${config.appName}/${item.name.replace(/\.pdf$/i, '')}_3x2_grid.pdf`}
                           >
@@ -433,7 +452,10 @@ export const BatchQueue: React.FC<BatchQueueProps> = ({
                           {typeof navigator !== 'undefined' && 'canShare' in navigator && (
                             <button
                               type="button"
-                              onClick={() => onShareItem(item)}
+                              onClick={() => {
+                                hapticSave();
+                                onShareItem(item);
+                              }}
                               className="flex items-center gap-1 rounded-lg border border-cyan-500/40 bg-cyan-950/40 px-2 py-1 text-[11px] font-medium text-cyan-300 transition hover:bg-cyan-900/60 hover:text-white"
                               title="Save to Downloads/Grid6_PDF via Android Share Sheet"
                             >
@@ -447,7 +469,10 @@ export const BatchQueue: React.FC<BatchQueueProps> = ({
                       {item.status === 'idle' && (
                         <button
                           type="button"
-                          onClick={() => onProcessItem(item.id)}
+                          onClick={() => {
+                            hapticTap();
+                            onProcessItem(item.id);
+                          }}
                           disabled={isProcessingBatch}
                           className="flex items-center gap-1 rounded-lg border border-indigo-500/30 bg-indigo-950/40 px-2.5 py-1 text-[11px] font-medium text-indigo-300 transition hover:bg-indigo-900/60 hover:text-white"
                         >
@@ -459,7 +484,10 @@ export const BatchQueue: React.FC<BatchQueueProps> = ({
                       {item.status === 'error' && (
                         <button
                           type="button"
-                          onClick={() => onReprocessItem(item.id)}
+                          onClick={() => {
+                            hapticTap();
+                            onReprocessItem(item.id);
+                          }}
                           className="flex items-center gap-1 rounded-lg border border-rose-500/40 bg-rose-950/40 px-2.5 py-1 text-[11px] font-medium text-rose-300 transition hover:bg-rose-900/60"
                         >
                           <RotateCcw className="h-3 w-3" />

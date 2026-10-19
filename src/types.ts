@@ -22,11 +22,9 @@ export interface GridConfig {
   borderWidthPt: number;
   borderColorHex: string;
   drawCutGuides: boolean;
-  drawPageNumbers: boolean;
+  drawPageNumbers: boolean; // Default: false (page numbers omitted by default)
   pageOrder: PageOrder;
   appName: string; // Default: 'Grid6_PDF'
-  autoProcessAndSave: boolean; // Default: true (1-click/zero-click conversion & saving when shared or uploaded)
-  autoOpenSavedPdf: boolean;   // Default: true (automatically open/preview the generated 3x2 PDF once saved)
 }
 
 export interface BatchItem {

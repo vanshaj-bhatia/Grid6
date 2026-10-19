@@ -63,19 +63,22 @@ const DEFAULT_CONFIG: GridConfig = {
   borderWidthPt: 0.5,
   borderColorHex: '#0f172a',
   drawCutGuides: true,
-  drawPageNumbers: true,
+  drawPageNumbers: false, // Page numbers removed from default config
   pageOrder: 'horizontal',
   appName: 'Grid6_PDF',
-  autoProcessAndSave: true, // 1-click / zero-click auto conversion and save
-  autoOpenSavedPdf: true,   // Open immediately once saved
 };
 
 export default function App() {
   const [config, setConfig] = useState<GridConfig>(() => {
     try {
-      const saved = localStorage.getItem('grid6_config_v4');
+      const saved = localStorage.getItem('grid6_config_v5');
       if (saved) {
         return { ...DEFAULT_CONFIG, ...JSON.parse(saved) };
+      }
+      const legacy = localStorage.getItem('grid6_config_v4');
+      if (legacy) {
+        const parsed = JSON.parse(legacy);
+        return { ...DEFAULT_CONFIG, ...parsed, drawPageNumbers: false };
       }
     } catch {
       // ignore
@@ -113,7 +116,7 @@ export default function App() {
   // Sync config with localStorage
   useEffect(() => {
     try {
-      localStorage.setItem('grid6_config_v4', JSON.stringify(config));
+      localStorage.setItem('grid6_config_v5', JSON.stringify(config));
     } catch {
       // ignore
     }
@@ -150,11 +153,10 @@ export default function App() {
     setConfig((prev) => ({ ...prev, ...partial }));
   };
 
-  // Full 1-Click Pipeline: Convert PDF with defaults, save to Downloads/APP_NAME, and open immediately
-  const executeProcessAndAutoSave = async (
+  // Convert PDF to 3x2 grid with active settings
+  const executeProcessItem = async (
     targetItem: BatchItem,
-    activeConfig: GridConfig,
-    shouldAutoOpen: boolean = true
+    activeConfig: GridConfig
   ) => {
     setItems((prev) =>
       prev.map((i) =>
@@ -184,26 +186,8 @@ export default function App() {
         prev.map((i) => (i.id === targetItem.id ? completedItem : i))
       );
 
-      // Auto-save to Downloads/APP_NAME
-      let saveNote = '';
-      if (activeConfig.autoProcessAndSave) {
-        try {
-          const res = await saveSinglePdf(completedItem, activeConfig.appName, false);
-          saveNote = res.pathDescription;
-        } catch (saveErr) {
-          console.warn('Auto save error:', saveErr);
-        }
-      }
-
-      // Auto-open once saved
-      if (activeConfig.autoOpenSavedPdf && shouldAutoOpen) {
-        setPreviewItem(completedItem);
-      }
-
       showToast(
-        saveNote
-          ? `⚡ Auto-converted, saved to ${saveNote} & opened!`
-          : `Converted "${targetItem.name}" into ${result.sheetCount} 3×2 sheets!`,
+        `Converted "${targetItem.name}" into ${result.sheetCount} 3×2 sheets!`,
         'success'
       );
 
@@ -231,7 +215,7 @@ export default function App() {
     }
   };
 
-  // Add files to queue and inspect page counts + trigger 1-click auto pipeline if enabled
+  // Add files to queue and inspect page counts
   const handleAddFiles = async (files: FileList | File[]) => {
     const fileArray = Array.from(files).filter(
       (f) => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf')
@@ -264,13 +248,6 @@ export default function App() {
         );
       } catch (err) {
         console.warn(`Failed reading page count for ${item.name}:`, err);
-      }
-    }
-
-    // 1-Click Auto Pipeline: If enabled, immediately convert, save, and open!
-    if (config.autoProcessAndSave) {
-      for (const item of newItems) {
-        await executeProcessAndAutoSave(item, config, true);
       }
     }
   };
@@ -354,7 +331,7 @@ export default function App() {
   const handleProcessItem = async (id: string) => {
     const item = items.find((i) => i.id === id);
     if (!item) return;
-    await executeProcessAndAutoSave(item, config, true);
+    await executeProcessItem(item, config);
   };
 
   // Process all pending items in batch
@@ -364,22 +341,17 @@ export default function App() {
 
     setIsProcessingBatch(true);
     let successCount = 0;
-    let lastProcessed: BatchItem | null = null;
 
     for (const item of pending) {
-      const res = await executeProcessAndAutoSave(item, config, false);
+      const res = await executeProcessItem(item, config);
       if (res) {
         successCount++;
-        lastProcessed = res;
       }
     }
 
     setIsProcessingBatch(false);
 
     if (successCount > 0) {
-      if (config.autoOpenSavedPdf && lastProcessed) {
-        setPreviewItem(lastProcessed);
-      }
       showToast(`Batch completed: ${successCount} PDF files merged into 3×2 grids!`, 'success');
     }
   };
@@ -390,22 +362,17 @@ export default function App() {
 
     setIsProcessingBatch(true);
     let successCount = 0;
-    let lastProcessed: BatchItem | null = null;
 
     for (const item of items) {
-      const res = await executeProcessAndAutoSave(item, config, false);
+      const res = await executeProcessItem(item, config);
       if (res) {
         successCount++;
-        lastProcessed = res;
       }
     }
 
     setIsProcessingBatch(false);
 
     if (successCount > 0) {
-      if (config.autoOpenSavedPdf && lastProcessed) {
-        setPreviewItem(lastProcessed);
-      }
       showToast(`Reprocessed ${successCount} document${successCount !== 1 ? 's' : ''} with current settings!`, 'success');
     }
   };

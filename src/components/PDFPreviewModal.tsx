@@ -2,6 +2,7 @@ import React from 'react';
 import { Archive, Download, ExternalLink, RotateCw, Share2, X } from 'lucide-react';
 import { BatchItem, GridConfig } from '../types';
 import { isAndroidDevice, saveSinglePdfAsZip } from '../services/fileStorage';
+import { hapticSave, hapticTap } from '../services/haptics';
 
 interface PDFPreviewModalProps {
   item: BatchItem | null;
@@ -48,6 +49,7 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
             {onReprocess && (
               <button
                 onClick={() => {
+                  hapticTap();
                   onReprocess(item);
                   onClose();
                 }}
@@ -61,7 +63,10 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
             )}
 
             <button
-              onClick={() => onSave(item)}
+              onClick={() => {
+                hapticSave();
+                onSave(item);
+              }}
               type="button"
               className="flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-500 active:scale-95"
               title={`Save into Downloads/${config.appName}/`}
@@ -73,7 +78,10 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
             {/* Android / Share Button */}
             {typeof navigator !== 'undefined' && 'canShare' in navigator && (
               <button
-                onClick={() => onShare(item)}
+                onClick={() => {
+                  hapticSave();
+                  onShare(item);
+                }}
                 type="button"
                 className="flex items-center gap-1.5 rounded-lg border border-cyan-500/40 bg-cyan-950/40 px-2.5 py-1.5 text-xs font-medium text-cyan-200 hover:bg-cyan-900/60 hover:text-white"
                 title="Save to Downloads/Grid6_PDF via Android Share Sheet (Save to Device)"
@@ -85,7 +93,10 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
 
             {/* ZIP single button */}
             <button
-              onClick={handleSaveAsZip}
+              onClick={() => {
+                hapticSave();
+                handleSaveAsZip();
+              }}
               type="button"
               className="hidden sm:flex items-center gap-1 rounded-lg border border-slate-700 bg-slate-800 px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:bg-slate-700 hover:text-white"
               title="Save as ZIP containing Downloads/Grid6_PDF/ folder"

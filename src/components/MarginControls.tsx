@@ -248,38 +248,6 @@ export const MarginControls: React.FC<MarginControlsProps> = ({ config, onChange
               </div>
             </div>
 
-            {/* 1-Click Auto Pipeline on Share / Drop */}
-            <div className="rounded-xl border border-emerald-500/30 bg-emerald-950/20 p-3.5 space-y-2.5">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-white">
-                    <span>⚡ One-Click Auto Processing on Share / Upload</span>
-                    <span className="rounded bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-300">Default: Active</span>
-                  </div>
-                  <p className="text-[11px] text-slate-300 mt-0.5">
-                    Automatically converts incoming PDFs, saves to Downloads/{config.appName}/, and opens the preview immediately.
-                  </p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={config.autoProcessAndSave}
-                  onChange={(e) => onChange({ autoProcessAndSave: e.target.checked })}
-                  className="h-4 w-4 rounded accent-emerald-500 cursor-pointer"
-                />
-              </div>
-
-              {config.autoProcessAndSave && (
-                <div className="flex items-center justify-between pt-1 border-t border-emerald-900/40 text-[11px] text-slate-300">
-                  <span>Open PDF preview modal immediately upon saving</span>
-                  <input
-                    type="checkbox"
-                    checked={config.autoOpenSavedPdf}
-                    onChange={(e) => onChange({ autoOpenSavedPdf: e.target.checked })}
-                    className="h-3.5 w-3.5 rounded accent-emerald-500 cursor-pointer"
-                  />
-                </div>
-              )}
-            </div>
 
             {/* Page Orientation & Page Layout Grid */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
