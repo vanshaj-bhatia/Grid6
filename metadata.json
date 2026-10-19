@@ -1,0 +1,6 @@
+{
+  "name": "Grid6 PDF",
+  "description": "Convert multi-page PDFs into 6-in-1 (3x2 grid) layout with custom margins, batch processing, live preview, and Android download support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
