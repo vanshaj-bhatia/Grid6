@@ -4,6 +4,7 @@ import {
   Download,
   FolderCheck,
   FolderHeart,
+  FolderOpen,
   Info,
   LayoutGrid,
   Share2,
@@ -58,15 +59,15 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Action Controls */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Direct Share / Receive Pill Button */}
+          {/* Direct Open With / Share Pill Button */}
           <button
             onClick={onOpenDirectShareGuide}
             type="button"
             className="flex items-center gap-1.5 rounded-lg border border-cyan-500/30 bg-cyan-950/30 px-2.5 py-1.5 text-xs font-medium text-cyan-200 transition hover:border-cyan-400/60 hover:bg-cyan-900/40 hover:text-white"
-            title="Export/Share from other apps directly into Grid6 PDF"
+            title="Open with & Share from other apps directly into Grid6 PDF"
           >
-            <Share2 className="h-3.5 w-3.5 text-cyan-400 animate-pulse" />
-            <span className="hidden md:inline">Direct App Share</span>
+            <FolderOpen className="h-3.5 w-3.5 text-cyan-400" />
+            <span className="hidden md:inline">Open With / Share</span>
           </button>
 
           {/* Target Folder Pill */}

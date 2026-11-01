@@ -40,11 +40,25 @@ export default defineConfig(() => {
           file_handlers: [
             {
               action: '/',
+              name: 'Grid6 PDF',
+              icons: [
+                {
+                  src: '/pwa-192x192.png',
+                  sizes: '192x192',
+                  type: 'image/png',
+                },
+                {
+                  src: '/pwa-512x512.png',
+                  sizes: '512x512',
+                  type: 'image/png',
+                },
+              ],
               accept: {
                 'application/pdf': ['.pdf'],
               },
+              launch_type: 'single-client',
             },
-          ],
+          ] as any,
           icons: [
             {
               src: '/pwa-192x192.png',

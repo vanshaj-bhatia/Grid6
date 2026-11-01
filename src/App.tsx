@@ -269,11 +269,11 @@ export default function App() {
 
     checkIncomingShares();
 
-    // Listen to Android File Handling API (LaunchQueue)
+    // Listen to Android File Handling API ("Open with" from Files app, Downloads, WhatsApp, etc.)
     setupLaunchQueueConsumer((files) => {
       if (isMounted && files.length > 0) {
         handleAddFiles(files);
-        showToast(`Opened ${files.length} PDF(s) directly via Android File Manager!`, 'success');
+        showToast(`Opened ${files.length} PDF(s) directly via Android "Open with"!`, 'success');
       }
     });
 
@@ -281,6 +281,26 @@ export default function App() {
       isMounted = false;
     };
   }, []);
+
+  // Simulate Android "Open with" action from a File Manager
+  const handleSimulateOpenWith = async () => {
+    try {
+      setIsLoadingSample(true);
+      const sample = await generateSampleMultiPagePdf();
+      const openWithFile = new File(
+        [sample],
+        'android_file_manager_opened_doc.pdf',
+        { type: 'application/pdf' }
+      );
+      await handleAddFiles([openWithFile]);
+      showToast('Simulated "Open with": PDF loaded from Android file manager!', 'success');
+    } catch (err) {
+      console.error(err);
+      showToast('Simulation failed.', 'error');
+    } finally {
+      setIsLoadingSample(false);
+    }
+  };
 
   // Simulate an external app sharing a document directly into Grid6
   const handleSimulateIncomingShare = async () => {
@@ -591,6 +611,7 @@ export default function App() {
         <DirectShareGuideModal
           onClose={() => setShowDirectShareGuide(false)}
           onSimulateIncomingShare={handleSimulateIncomingShare}
+          onSimulateOpenWith={handleSimulateOpenWith}
         />
       )}
     </div>

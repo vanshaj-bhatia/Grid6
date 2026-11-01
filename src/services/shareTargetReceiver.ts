@@ -48,7 +48,14 @@ export async function retrieveSharedFilesFromCache(): Promise<File[]> {
 }
 
 /**
- * Listen for File Handling API ("Open with" from Android File Managers)
+ * Check if the browser natively supports the File Handling API ("Open with")
+ */
+export function isFileHandlingSupported(): boolean {
+  return typeof window !== 'undefined' && 'launchQueue' in window;
+}
+
+/**
+ * Listen for File Handling API ("Open with" from Android File Managers, Downloads, Files app)
  */
 export function setupLaunchQueueConsumer(onFilesReceived: (files: File[]) => void) {
   if (typeof window === 'undefined') return;
@@ -66,8 +73,20 @@ export function setupLaunchQueueConsumer(onFilesReceived: (files: File[]) => voi
       for (const handle of launchParams.files) {
         try {
           const file = await handle.getFile();
-          if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
-            files.push(file);
+          const isPdf =
+            file.type === 'application/pdf' ||
+            file.type.toLowerCase().includes('pdf') ||
+            file.name.toLowerCase().endsWith('.pdf') ||
+            file.type === '' ||
+            file.type === 'application/octet-stream';
+
+          if (isPdf) {
+            const fileName = file.name.toLowerCase().endsWith('.pdf') ? file.name : `${file.name || 'document'}.pdf`;
+            const validFile = new File([file], fileName, {
+              type: 'application/pdf',
+              lastModified: file.lastModified || Date.now(),
+            });
+            files.push(validFile);
           }
         } catch (err) {
           console.warn('Could not read file from launchParams handle:', err);
